@@ -2,6 +2,7 @@ package repository.user;
 
 import model.User;
 import model.builder.UserBuilder;
+import model.validation.Notification;
 import repository.security.RightsRolesRepository;
 
 import java.sql.*;
@@ -26,25 +27,33 @@ public class UserRepositoryMySQL implements UserRepository{
 
     // face concatenare de string-uri =>>> trebuie modificata
     @Override
-    public User findByUsernameAndPassword(String username, String password) {
+    public Notification<User> findByUsernameAndPassword(String username, String password) {
+
+        Notification<User> findByUsernameAndPasswordNotification = new Notification<>();
+
         try {
             Statement statement = connection.createStatement();
 
             String fetchUserSql =  "Select * from `" + USER + "` where `username`=\'" + username + "\' and `password`=\'" + password + "\'";
             ResultSet userResultSet = statement.executeQuery(fetchUserSql);
-            userResultSet.next();
+            if (userResultSet.next()) {
+                User user = new UserBuilder()
+                        .setUsername(userResultSet.getString("username"))
+                        .setPassword(userResultSet.getString("password"))
+                        .setRoles(rightsRolesRepository.findRolesForUser(userResultSet.getLong("id")))
+                        .build();
+                findByUsernameAndPasswordNotification.setResult(user);
+            } else {
+                findByUsernameAndPasswordNotification.addError("Invalid username or password!");
+                return findByUsernameAndPasswordNotification;
+            }
 
-            User user = new UserBuilder()
-                    .setUsername(userResultSet.getString("username"))
-                    .setPassword(userResultSet.getString("password"))
-                    .setRoles(rightsRolesRepository.findRolesForUser(userResultSet.getLong("id")))
-                    .build();
-
-            return user;
         } catch (SQLException e) {
             System.out.println(e.toString());
+            findByUsernameAndPasswordNotification.addError("Something is wrong with the Database!");
         }
-        return null;
+
+        return findByUsernameAndPasswordNotification;
     }
 
     @Override
