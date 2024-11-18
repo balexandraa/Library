@@ -2,8 +2,8 @@ import database.DatabaseConnectionFactory;
 import model.Book;
 import model.builder.BookBuilder;
 import org.junit.jupiter.api.*;
-import repository.BookRepository;
-import repository.BookRepositoryMySQL;
+import repository.book.BookRepository;
+import repository.book.BookRepositoryMySQL;
 
 import java.sql.Connection;
 import java.time.LocalDate;
