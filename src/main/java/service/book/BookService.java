@@ -1,4 +1,4 @@
-package service;
+package service.book;
 
 // metodele pe care le va putea folosi Presentation
 
