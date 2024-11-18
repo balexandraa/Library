@@ -26,16 +26,7 @@ public class Launcher extends Application {
     public void start(Stage primaryStage) throws Exception {
        // ComponentFactory.getInstance(false, primaryStage);
 
-        final Connection connection = new JDBCConnectionWrapper(PRODUCTION).getConnection();
-
-        final RightsRolesRepository rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
-        final UserRepository userRepository = new UserRepositoryMySQL(connection, rightsRolesRepository);
-
-        final AuthenticationService authenticationService = new AuthenticationServiceImpl(userRepository, rightsRolesRepository);
-
-        final LoginView loginView = new LoginView(primaryStage);
-
-        new LoginController(loginView, authenticationService);
+        LoginComponentFactory loginComponentFactory = LoginComponentFactory.getInstance(false, primaryStage);
 
     }
 }
