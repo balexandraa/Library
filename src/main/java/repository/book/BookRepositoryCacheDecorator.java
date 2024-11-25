@@ -52,4 +52,59 @@ public class BookRepositoryCacheDecorator extends BookRepositoryDecorator{
         cache.invalidateCache();
         decoratedBookRepository.removeAll();
     }
+
+    @Override
+    public boolean updateStock(String title, String author, int newStock) {
+        boolean isUpdated = decoratedBookRepository.updateStock(title, author, newStock);
+
+        if (isUpdated) {
+            if (cache.hasResult()) {
+                List<Book> books = cache.load();
+                books.stream()
+                        .filter(book -> book.getTitle().equals(title) && book.getAuthor().equals(author))
+                        .findFirst()
+                        .ifPresent(book -> book.setStock(newStock));
+
+                cache.save(books);
+            }
+        }
+        return isUpdated;
+    }
+
+    @Override
+    public Optional<Book> findByTitleAndAuthor(String title, String author) {
+        return Optional.empty();
+    }
+
+//    @Override
+//    public boolean sell(Book book) {
+//        boolean sellSuccessful = decoratedBookRepository.sell(book);
+//
+//        if (sellSuccessful) {
+//            // actualizare cache
+//            if (cache.hasResult()) {
+//                List<Book> books = cache.load();
+//
+//                // gasim cartea in cache
+//                Optional<Book> cachedBook = books.stream()
+//                        .filter(b -> b.getId().equals(book.getId()))
+//                        .findFirst();
+//
+//                if (cachedBook.isPresent()) {
+//                    Book cached = cachedBook.get();
+//                    int newStock = cached.getStock() - 1;
+//
+//                    if (newStock > 0) {
+//                        cached.setStock(newStock);
+//                    } else {
+//                        books.remove(cached);
+//                    }
+//
+//                    cache.save(books);
+//                }
+//            }
+//        }
+//
+//        return sellSuccessful;
+//    }
 }

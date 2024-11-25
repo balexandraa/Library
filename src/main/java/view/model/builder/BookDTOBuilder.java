@@ -1,6 +1,5 @@
 package view.model.builder;
 
-import model.builder.BookBuilder;
 import view.model.BookDTO;
 
 public class BookDTOBuilder {
@@ -19,6 +18,26 @@ public class BookDTOBuilder {
         bookDTO.setTitle(title);
         return this;
     }
+
+    public BookDTOBuilder setPrice(Double price) {
+        bookDTO.setPrice(price);
+        return this;
+    }
+
+    public BookDTOBuilder setStock(Integer stock) {
+        bookDTO.setStock(stock);
+        return this;
+    }
+
+//    public BookDTOBuilder setQuantity(Integer quantity) {
+//        bookDTO.setQuantity(quantity);
+//        return this;
+//    }
+
+//    public BookDTOBuilder setId(Long id) {
+//        bookDTO.setId(id);
+//        return this;
+//    }
 
     public BookDTO build() {
         return bookDTO;

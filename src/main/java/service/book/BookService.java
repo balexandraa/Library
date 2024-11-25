@@ -12,4 +12,7 @@ public interface BookService {
     boolean save(Book book);
     boolean delete(Book book);
     int getAgeOfBook(Long id);
+   // boolean sell(Book book);
+    boolean updateStock(String title, String author, int newStock);
+    Book findByTitleAndAuthor(String title, String author);
 }

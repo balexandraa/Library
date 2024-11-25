@@ -30,18 +30,22 @@ public class UserRepositoryMySQL implements UserRepository{
     public Notification<User> findByUsernameAndPassword(String username, String password) {
 
         Notification<User> findByUsernameAndPasswordNotification = new Notification<>();
+        String fetchUserSql =  "SELECT * FROM user WHERE username = ? AND password = ?";
 
         try {
-            Statement statement = connection.createStatement();
+            PreparedStatement preparedStatement = connection.prepareStatement(fetchUserSql);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
 
-            String fetchUserSql =  "Select * from `" + USER + "` where `username`=\'" + username + "\' and `password`=\'" + password + "\'";
-            ResultSet userResultSet = statement.executeQuery(fetchUserSql);
+            ResultSet userResultSet = preparedStatement.executeQuery();
+
             if (userResultSet.next()) {
                 User user = new UserBuilder()
                         .setUsername(userResultSet.getString("username"))
                         .setPassword(userResultSet.getString("password"))
                         .setRoles(rightsRolesRepository.findRolesForUser(userResultSet.getLong("id")))
                         .build();
+
                 findByUsernameAndPasswordNotification.setResult(user);
             } else {
                 findByUsernameAndPasswordNotification.addError("Invalid username or password!");
@@ -93,11 +97,13 @@ public class UserRepositoryMySQL implements UserRepository{
     // folosim concatenare string uri ->>> nu e ok!!!
     @Override
     public boolean existsByUsername(String email) {
+        String fetchUserSql = "SELECT * FROM user WHERE username = ?";
         try {
-            Statement statement = connection.createStatement();
+            PreparedStatement preparedStatement = connection.prepareStatement(fetchUserSql);
 
-            String fetchUserSql = "Select * from `" + USER + "` where `username`=\'" + email + "\'";
-            ResultSet userResultSet = statement.executeQuery(fetchUserSql);
+            preparedStatement.setString(1, email);
+
+            ResultSet userResultSet = preparedStatement.executeQuery();
             return userResultSet.next();
 
         } catch (SQLException e) {

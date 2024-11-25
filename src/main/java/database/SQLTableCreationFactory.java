@@ -6,11 +6,21 @@ public class SQLTableCreationFactory {
 
     public String getCreateSQLForTable(String table) {
         return switch (table) {
+            case SOLD_BOOK -> "CREATE TABLE IF NOT EXISTS sold_book (" +
+                    "  id int(11) NOT NULL AUTO_INCREMENT," +
+                    "  author varchar(500) NOT NULL," +
+                    "  title varchar(500) NOT NULL," +
+                    "  quantity INT NOT NULL," +
+                    "  PRIMARY KEY (id)," +
+                    "  UNIQUE KEY id_UNIQUE (id)" +
+                    ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
             case BOOK -> "CREATE TABLE IF NOT EXISTS book (" +
                     "  id int(11) NOT NULL AUTO_INCREMENT," +
                     "  author varchar(500) NOT NULL," +
                     "  title varchar(500) NOT NULL," +
                     "  publishedDate datetime DEFAULT NULL," +
+                    "  price DECIMAL(5, 2) NOT NULL," +
+                    "  stock INT NOT NULL," +
                     "  PRIMARY KEY (id)," +
                     "  UNIQUE KEY id_UNIQUE (id)" +
                     ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";

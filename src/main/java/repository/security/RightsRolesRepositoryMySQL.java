@@ -61,11 +61,15 @@ public class RightsRolesRepositoryMySQL implements RightsRolesRepository{
 
     @Override
     public Role findRoleById(Long roleId) {
-        Statement statement;
+
+        String fetchRoleSql = "SELECT * FROM role WHERE id = ?";
+
         try {
-            statement = connection.createStatement();
-            String fetchRoleSql = "Select * from " + ROLE + " where `id`=\'" + roleId + "\'";
-            ResultSet roleResultSet = statement.executeQuery(fetchRoleSql);
+            PreparedStatement preparedStatement = connection.prepareStatement(fetchRoleSql);
+
+            preparedStatement.setLong(1, roleId);
+
+            ResultSet roleResultSet = preparedStatement.executeQuery();
             roleResultSet.next();
             String roleTitle = roleResultSet.getString("role");
             return new Role(roleId, roleTitle, null);
@@ -78,11 +82,15 @@ public class RightsRolesRepositoryMySQL implements RightsRolesRepository{
 
     @Override
     public Right findRightByTitle(String right) {
-        Statement statement;
+
+        String fetchRoleSql = "SELECT * FROM right WHERE right = ?";
+
         try {
-            statement = connection.createStatement();
-            String fetchRoleSql = "Select * from `" + RIGHT + "` where `right`=\'" + right + "\'";
-            ResultSet rightResultSet = statement.executeQuery(fetchRoleSql);
+            PreparedStatement preparedStatement = connection.prepareStatement(fetchRoleSql);
+
+            preparedStatement.setString(1, right);
+
+            ResultSet rightResultSet = preparedStatement.executeQuery();
             rightResultSet.next();
             Long rightId = rightResultSet.getLong("id");
             String rightTitle = rightResultSet.getString("right");
@@ -110,11 +118,15 @@ public class RightsRolesRepositoryMySQL implements RightsRolesRepository{
 
     @Override
     public List<Role> findRolesForUser(Long userId) {
+        String fetchRoleSql = "SELECT * FROM user_role WHERE user_id = ?";
         try {
             List<Role> roles = new ArrayList<>();
-            Statement statement = connection.createStatement();
-            String fetchRoleSql = "Select * from " + USER_ROLE + " where `user_id`=\'" + userId + "\'";
-            ResultSet userRoleResultSet = statement.executeQuery(fetchRoleSql);
+            PreparedStatement preparedStatement = connection.prepareStatement(fetchRoleSql);
+
+            preparedStatement.setLong(1, userId);
+
+            ResultSet userRoleResultSet = preparedStatement.executeQuery();
+
             while (userRoleResultSet.next()) {
                 long roleId = userRoleResultSet.getLong("role_id");
                 roles.add(findRoleById(roleId));
