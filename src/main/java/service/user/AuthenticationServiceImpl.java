@@ -26,20 +26,29 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     }
 
     @Override
-    public Notification<Boolean> register(String username, String password) {
+    public Notification<Boolean> register(String username, String password, String role) {
+        Notification<Boolean> userRegisterNotification = new Notification<>();
 
-        Role customerRole = rightsRolesRepository.findRoleByTitle(CUSTOMER);
+        boolean usernameExists = userRepository.existsByUsername(username);
+
+        if (usernameExists) {
+            userRegisterNotification.addError("User already exits!");
+            userRegisterNotification.setResult(Boolean.FALSE);
+            return userRegisterNotification;
+        }
+
+        Role userRole = rightsRolesRepository.findRoleByTitle(role);
 
         User user = new UserBuilder()
                 .setUsername(username)
                 .setPassword(password)
-                .setRoles(Collections.singletonList(customerRole))
+                .setRoles(Collections.singletonList(userRole))
                 .build();
 
         UserValidator userValidator = new UserValidator(user);
 
         boolean userValid = userValidator.validate();
-        Notification<Boolean> userRegisterNotification = new Notification<>();
+
 
         if (!userValid) {
             userValidator.getErrors().forEach(userRegisterNotification::addError);

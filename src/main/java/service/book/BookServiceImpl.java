@@ -44,33 +44,9 @@ public class BookServiceImpl implements BookService{
         return (int) ChronoUnit.YEARS.between(book.getPublishedDate(), now);
     }
 
-//    @Override
-//    public boolean sell(Book book) {
-//        if (book.getStock() > 0) {
-//            int newStock = book.getStock() - 1;
-//            book.setStock(newStock);
-//
-//            boolean updatedSoldBook = bookRepository.sell(book);
-//
-//            if (book.getStock() == 0) {
-//                return bookRepository.delete(book) && updatedSoldBook;
-//            } else {
-//                return bookRepository.updateStock(book.getId(), newStock) && updatedSoldBook;
-//              //  return bookRepository.sell(book);
-//            }
-//        }
-//        return false;
-//    }
-
     @Override
     public boolean updateStock(String title, String author, int newStock) {
         return bookRepository.updateStock(title, author, newStock);
-    }
-
-    @Override
-    public Book findByTitleAndAuthor(String title, String author) {
-        return bookRepository.findByTitleAndAuthor(title, author)
-                .orElseThrow(() -> new IllegalArgumentException("Book with title: %s and author: %s was not found.".formatted(title).formatted(author)));
     }
 }
 

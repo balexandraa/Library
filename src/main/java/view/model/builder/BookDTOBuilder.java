@@ -29,16 +29,6 @@ public class BookDTOBuilder {
         return this;
     }
 
-//    public BookDTOBuilder setQuantity(Integer quantity) {
-//        bookDTO.setQuantity(quantity);
-//        return this;
-//    }
-
-//    public BookDTOBuilder setId(Long id) {
-//        bookDTO.setId(id);
-//        return this;
-//    }
-
     public BookDTO build() {
         return bookDTO;
     }

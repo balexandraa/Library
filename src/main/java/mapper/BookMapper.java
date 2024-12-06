@@ -3,9 +3,7 @@ package mapper;
 import model.Book;
 import model.builder.BookBuilder;
 import view.model.BookDTO;
-import view.model.SoldBookDTO;
 import view.model.builder.BookDTOBuilder;
-import view.model.builder.SoldBookDTOBuilder;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,9 +11,6 @@ import java.util.stream.Collectors;
 
 public class BookMapper {
     public static BookDTO convertBookToBookDTO(Book book) {
-        if (book.getId() == null || book.getId() == 0) {
-            throw new IllegalArgumentException("Book ID is invalid or missing. Please ensure all books have a valid ID.");
-        }
         return new BookDTOBuilder().setTitle(book.getTitle()).setAuthor(book.getAuthor()).setPrice(book.getPrice()).setStock(book.getStock()).build();
     }
 
@@ -34,15 +29,4 @@ public class BookMapper {
                 .map(BookMapper::convertBookDTOToBook)
                 .collect(Collectors.toList());
     }
-
-//    public static BookDTO convertBookToSoldBookDTO(Book book, int quantity) {
-//        return new BookDTOBuilder().setTitle(book.getTitle()).setAuthor(book.getAuthor()).setQuantity(quantity).build();
-//    }
-//
-//    public static List<BookDTO> convertBookListToSoldBookDTOList(List<Book> books, int quantity) {
-//        return books.parallelStream()
-//                .map(book -> convertBookToSoldBookDTO(book, quantity))
-//                .collect(Collectors.toList());
-//    }
-
 }
