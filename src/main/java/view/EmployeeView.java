@@ -12,12 +12,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import view.model.BookDTO;
-import view.model.SoldBookDTO;
 
 
 import java.util.List;
 
-public class BookView {
+public class EmployeeView {
     private TableView bookTableView;
     private final ObservableList<BookDTO> booksObservableList;
     private TableView soldBookTableView;
@@ -36,7 +35,7 @@ public class BookView {
 
 
 
-    public BookView(Stage primaryStage, List<BookDTO> books, List<BookDTO> soldBookDTOS) {
+    public EmployeeView(Stage primaryStage, List<BookDTO> books, List<BookDTO> soldBookDTOS) {
         primaryStage.setTitle("Library");
 
         GridPane gridPane = new GridPane();

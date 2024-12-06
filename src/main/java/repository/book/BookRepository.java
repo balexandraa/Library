@@ -14,6 +14,5 @@ public interface BookRepository {
     boolean delete(Book book);
     void removeAll();
     boolean updateStock(String title, String author, int newStock);
-   // boolean sell(Book book);
     Optional<Book> findByTitleAndAuthor(String title, String author);
 }

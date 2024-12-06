@@ -46,9 +46,6 @@ public class Book {
         this.publishedDate = publishedDate;
     }
 
-    // add get and set for price and stock
-
-
     public double getPrice() {
         return price;
     }

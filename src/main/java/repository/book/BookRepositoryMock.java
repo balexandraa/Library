@@ -51,11 +51,9 @@ public class BookRepositoryMock implements BookRepository{
 
     @Override
     public Optional<Book> findByTitleAndAuthor(String title, String author) {
-        return Optional.empty();
+        return books.parallelStream()
+                .filter(book -> book.getTitle().equals(title) && book.getAuthor().equals(author))
+                .findFirst();
     }
 
-//    @Override
-//    public boolean sell(Book book) {
-//        return false;
-//    }
 }

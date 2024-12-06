@@ -21,7 +21,7 @@ public class RightsRolesRepositoryMySQL implements RightsRolesRepository{
     public void addRole(String role) {
         try {
             PreparedStatement insertStatement = connection
-                    .prepareStatement("INSERT IGNORE INTO " + ROLE + " values (null, ?)");
+                    .prepareStatement("INSERT IGNORE INTO role values (null, ?)");
             insertStatement.setString(1, role);
             insertStatement.executeUpdate();
         } catch (SQLException e) {
@@ -33,7 +33,7 @@ public class RightsRolesRepositoryMySQL implements RightsRolesRepository{
     public void addRight(String right) {
         try {
             PreparedStatement insertStatement = connection
-                    .prepareStatement("INSERT IGNORE INTO `" + RIGHT + "` values (null, ?)");
+                    .prepareStatement("INSERT IGNORE INTO `right` values (null, ?)");
             insertStatement.setString(1, right);
             insertStatement.executeUpdate();
         } catch (SQLException e) {
@@ -43,15 +43,20 @@ public class RightsRolesRepositoryMySQL implements RightsRolesRepository{
 
     @Override
     public Role findRoleByTitle(String role) {
-        Statement statement;
+        String sql = "SELECT * FROM role WHERE `role` = ?";
+
         try {
-            statement = connection.createStatement();
-            String fetchRoleSql = "Select * from " + ROLE + " where `role`=\'" + role + "\'";
-            ResultSet roleResultSet = statement.executeQuery(fetchRoleSql);
-            roleResultSet.next();
-            Long roleId = roleResultSet.getLong("id");
-            String roleTitle = roleResultSet.getString("role");
-            return new Role(roleId, roleTitle, null);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setString(1, role);
+
+            ResultSet roleResultSet = preparedStatement.executeQuery();
+            if (roleResultSet.next()) {
+                Long roleId = roleResultSet.getLong("id");
+                String roleTitle = roleResultSet.getString("role");
+                return new Role(roleId, roleTitle, null);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -83,7 +88,7 @@ public class RightsRolesRepositoryMySQL implements RightsRolesRepository{
     @Override
     public Right findRightByTitle(String right) {
 
-        String fetchRoleSql = "SELECT * FROM right WHERE right = ?";
+        String fetchRoleSql = "SELECT * FROM `right` WHERE `right` = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(fetchRoleSql);
@@ -142,7 +147,7 @@ public class RightsRolesRepositoryMySQL implements RightsRolesRepository{
     public void addRoleRight(Long roleId, Long rightId) {
         try {
             PreparedStatement insertStatement = connection
-                    .prepareStatement("INSERT IGNORE INTO " + ROLE_RIGHT + " values (null, ?, ?)");
+                    .prepareStatement("INSERT IGNORE INTO role_right values (null, ?, ?)");
             insertStatement.setLong(1, roleId);
             insertStatement.setLong(2, rightId);
             insertStatement.executeUpdate();

@@ -6,6 +6,7 @@ import model.validation.Notification;
 import repository.security.RightsRolesRepository;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static database.Constants.Tables.USER;
@@ -22,10 +23,23 @@ public class UserRepositoryMySQL implements UserRepository{
 
     @Override
     public List<User> findAll() {
-        return null;
+        String sql = "SELECT * FROM user";
+
+        List<User> users = new ArrayList<>();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+                users.add(getUserFromResultSet(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return users;
     }
 
-    // face concatenare de string-uri =>>> trebuie modificata
     @Override
     public Notification<User> findByUsernameAndPassword(String username, String password) {
 
@@ -84,6 +98,23 @@ public class UserRepositoryMySQL implements UserRepository{
     }
 
     @Override
+    public boolean delete(User user) {
+        String sql = "DELETE FROM user WHERE username = ?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, user.getUsername());
+
+            int rowInserted = preparedStatement.executeUpdate();
+
+            return rowInserted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
     public void removeAll() {
         try {
             Statement statement = connection.createStatement();
@@ -94,7 +125,6 @@ public class UserRepositoryMySQL implements UserRepository{
         }
     }
 
-    // folosim concatenare string uri ->>> nu e ok!!!
     @Override
     public boolean existsByUsername(String email) {
         String fetchUserSql = "SELECT * FROM user WHERE username = ?";
@@ -110,5 +140,41 @@ public class UserRepositoryMySQL implements UserRepository{
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public Notification<User> findByUsername(String username) {
+        Notification<User> findByUsernameNotification = new Notification<>();
+        String sql = "SELECT * FROM user WHERE username = ?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, username);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                User user = new UserBuilder()
+                        .setId(resultSet.getLong("id"))
+                        .setUsername(resultSet.getString("username"))
+                        .build();
+                findByUsernameNotification.setResult(user);
+            } else {
+                findByUsernameNotification.addError("Invalid username!");
+                return findByUsernameNotification;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+            findByUsernameNotification.addError("Something is wrong with the Database!");
+        }
+        return findByUsernameNotification;
+    }
+
+    private User getUserFromResultSet(ResultSet resultSet) throws SQLException {
+        return new UserBuilder()
+                .setId(resultSet.getLong("id"))
+                .setUsername(resultSet.getString("username"))
+                .setPassword(resultSet.getString("password"))
+                .setRoles(rightsRolesRepository.findRolesForUser(resultSet.getLong("id")))
+                .build();
     }
 }

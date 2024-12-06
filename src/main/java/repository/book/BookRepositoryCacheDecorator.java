@@ -73,38 +73,18 @@ public class BookRepositoryCacheDecorator extends BookRepositoryDecorator{
 
     @Override
     public Optional<Book> findByTitleAndAuthor(String title, String author) {
-        return Optional.empty();
-    }
+        if (cache.hasResult()) {
+            return cache.load().stream()
+                    .filter(book -> book.getTitle().equals(title) && book.getAuthor().equals(author))
+                    .findFirst();
+        }
 
-//    @Override
-//    public boolean sell(Book book) {
-//        boolean sellSuccessful = decoratedBookRepository.sell(book);
-//
-//        if (sellSuccessful) {
-//            // actualizare cache
-//            if (cache.hasResult()) {
-//                List<Book> books = cache.load();
-//
-//                // gasim cartea in cache
-//                Optional<Book> cachedBook = books.stream()
-//                        .filter(b -> b.getId().equals(book.getId()))
-//                        .findFirst();
-//
-//                if (cachedBook.isPresent()) {
-//                    Book cached = cachedBook.get();
-//                    int newStock = cached.getStock() - 1;
-//
-//                    if (newStock > 0) {
-//                        cached.setStock(newStock);
-//                    } else {
-//                        books.remove(cached);
-//                    }
-//
-//                    cache.save(books);
-//                }
-//            }
-//        }
-//
-//        return sellSuccessful;
-//    }
+        Optional<Book> book = decoratedBookRepository.findByTitleAndAuthor(title, author);
+        book.ifPresent(b -> {
+            List<Book> books = cache.load();
+            books.add(b);
+            cache.save(books);
+        });
+        return book;
+    }
 }
