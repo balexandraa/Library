@@ -52,4 +52,39 @@ public class BookRepositoryCacheDecorator extends BookRepositoryDecorator{
         cache.invalidateCache();
         decoratedBookRepository.removeAll();
     }
+
+    @Override
+    public boolean updateStock(String title, String author, int newStock) {
+        boolean isUpdated = decoratedBookRepository.updateStock(title, author, newStock);
+
+        if (isUpdated) {
+            if (cache.hasResult()) {
+                List<Book> books = cache.load();
+                books.stream()
+                        .filter(book -> book.getTitle().equals(title) && book.getAuthor().equals(author))
+                        .findFirst()
+                        .ifPresent(book -> book.setStock(newStock));
+
+                cache.save(books);
+            }
+        }
+        return isUpdated;
+    }
+
+    @Override
+    public Optional<Book> findByTitleAndAuthor(String title, String author) {
+        if (cache.hasResult()) {
+            return cache.load().stream()
+                    .filter(book -> book.getTitle().equals(title) && book.getAuthor().equals(author))
+                    .findFirst();
+        }
+
+        Optional<Book> book = decoratedBookRepository.findByTitleAndAuthor(title, author);
+        book.ifPresent(b -> {
+            List<Book> books = cache.load();
+            books.add(b);
+            cache.save(books);
+        });
+        return book;
+    }
 }

@@ -38,4 +38,22 @@ public class BookRepositoryMock implements BookRepository{
     public void removeAll() {
         books.clear();
     }
+
+    @Override
+    public boolean updateStock(String title, String author, int newStock) {
+        Optional<Book> book = findByTitleAndAuthor(title, author);
+        if (book.isPresent()) {
+            book.get().setStock(newStock);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Optional<Book> findByTitleAndAuthor(String title, String author) {
+        return books.parallelStream()
+                .filter(book -> book.getTitle().equals(title) && book.getAuthor().equals(author))
+                .findFirst();
+    }
+
 }

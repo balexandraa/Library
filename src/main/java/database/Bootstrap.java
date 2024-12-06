@@ -43,6 +43,7 @@ public class Bootstrap {
                     "TRUNCATE `user_role`;",
                     "DROP TABLE `user_role`;",
                     "TRUNCATE `role`;",
+                    "DROP TABLE `order`;",
                     "DROP TABLE  `book`, `role`, `user`;"
             };
 

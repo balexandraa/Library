@@ -2,6 +2,7 @@ package service.book;
 
 import model.Book;
 import repository.book.BookRepository;
+import repository.book.BookRepositoryMySQL;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -42,4 +43,10 @@ public class BookServiceImpl implements BookService{
 
         return (int) ChronoUnit.YEARS.between(book.getPublishedDate(), now);
     }
+
+    @Override
+    public boolean updateStock(String title, String author, int newStock) {
+        return bookRepository.updateStock(title, author, newStock);
+    }
 }
+

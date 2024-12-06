@@ -34,6 +34,8 @@ public class JDBCConnectionWrapper {
                 " author VARCHAR(500) NOT NULL," +
                 " title VARCHAR(500) NOT NULL," +
                 " publishedDate datetime DEFAULT NULL," +
+                " price DECIMAL(5, 2) NOT NULL," +
+                " stock INT NOT NULL," +
                 " PRIMARY KEY(id)," +
                 " UNIQUE KEY id_UNIQUE(id)" +
                 ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
