@@ -18,7 +18,6 @@ The aim of this application is to manage a Bookstore through two types of users:
 ## Technologies Used
 
 - **Java**
-- **Spring Boot**
 - **MySQL**
 - **MVC Architecture** 
 - **Layered Architecture** 
